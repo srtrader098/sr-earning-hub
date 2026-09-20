@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SR EARNING HUB</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#070b16;color:#fff;font-family:Inter,Arial,sans-serif}.wrap{max-width:430px;margin:auto;padding:18px}.top{display:flex;align-items:center;gap:12px;margin-bottom:18px}.logo{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#ffbd3d,#ff6b00);display:grid;place-items:center;font-size:27px;box-shadow:0 8px 25px #ff8c0030}.brand{font-weight:900;font-size:18px}.sub{color:#8f9ab1;font-size:11px;margin-top:3px}.live{margin-left:auto;color:#52e18a;font-size:11px}.hero{background:linear-gradient(145deg,#111a30,#0c1222);border:1px solid #202c46;border-radius:24px;padding:20px;margin-bottom:14px}.hero h2{margin:0 0 7px;font-size:23px}.hero p{margin:0;color:#8f9ab1;font-size:13px}.balance{margin-top:17px;background:linear-gradient(135deg,#1677ff,#3158ff);border-radius:20px;padding:18px;box-shadow:0 12px 30px #1268ff30}.label{font-size:11px;opacity:.75}.money{font-size:32px;font-weight:900;margin-top:5px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}.stat{background:#0e1526;border:1px solid #1d2940;border-radius:18px;padding:15px}.num{font-size:21px;font-weight:800;margin-top:5px}.muted{color:#8590a8;font-size:11px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:11px}.btn{border:0;color:#fff;border-radius:16px;padding:16px 8px;font-weight:800;font-size:13px;cursor:pointer}.blue{background:#126cf4}.red{background:#e64255}.green{background:#12a96b}.gold{background:#bd8a16}.code{margin-top:15px;background:#0e1526;border:1px solid #25314b;border-radius:20px;padding:16px;display:flex;align-items:center;justify-content:space-between}.code b{letter-spacing:1px}.copy{background:#1d2940;color:#fff;border:0;border-radius:10px;padding:9px 12px}.panel{display:none;margin-top:14px;background:#0e1526;border:1px solid #25314b;border-radius:20px;padding:16px}.panel input,.panel select{width:100%;padding:13px;border-radius:12px;border:1px solid #2a3750;background:#080e1b;color:#fff;margin:7px 0}.panel button{width:100%;padding:13px;border:0;border-radius:12px;background:#126cf4;color:#fff;font-weight:800;margin-top:6px}.item{border-bottom:1px solid #1f2a40;padding:10px 0;font-size:12px}.footer{text-align:center;color:#59657c;font-size:10px;margin:18px 0}
+</style></head><body><div class="wrap">
+<div class="top"><div class="logo">💰</div><div><div class="brand">SR EARNING HUB</div><div class="sub">Premium Task Platform</div></div><div class="live">● LIVE</div></div>
+<div class="hero"><h2>Hello, Member 👋</h2><p>Complete verified tasks and grow your balance.</p><div class="balance"><div class="label">AVAILABLE BALANCE</div><div class="money" id="balance">৳0.00</div></div></div>
+<div class="stats"><div class="stat"><div class="muted">COMPLETED TASKS</div><div class="num" id="completed">0</div></div><div class="stat"><div class="muted">IN REVIEW</div><div class="num" id="review">0</div></div></div>
+<div class="actions">
+<button class="btn blue" onclick="show('bal')">💰 Balance</button><button class="btn red" onclick="show('task')">📋 Tasks</button>
+<button class="btn green" onclick="show('withdraw')">💸 Withdraw</button><button class="btn blue" onclick="support()">💬 Support</button>
+<button class="btn blue" onclick="show('history')">📚 My Tasks</button><button class="btn green" onclick="show('new')">🆕 I am New?</button>
+<button class="btn gold" onclick="leaderboard()">🏆 Leaderboard</button><button class="btn red" onclick="alert('Language: English / বাংলা')">🌐 Change Language</button>
+</div>
+<div class="code"><div><div class="muted">TODAY'S PASSWORD / TASK CODE</div><b id="code">Loading...</b></div><button class="copy" onclick="copyCode()">COPY</button></div>
+<div id="bal" class="panel"><b>💰 Your Balance</b><p class="muted">Available balance</p><h2 id="bal2">৳0.00</h2></div>
+<div id="task" class="panel"><b>📋 Submit Task</b><p class="muted">Submit your Gmail address/identifier and today's task code. Never submit a login password.</p><input id="identifier" placeholder="Gmail address / identifier"><input id="taskcode" placeholder="Today's task code"><button onclick="submitTask()">Submit for Review</button><p id="taskmsg" class="muted"></p></div>
+<div id="withdraw" class="panel"><b>💸 Withdraw</b><input id="amount" type="number" placeholder="Amount (৳)"><select id="method"><option>bKash</option><option>USDT BEP20</option></select><input id="account" placeholder="bKash number / USDT BEP20 address"><button onclick="withdraw()">Request Withdrawal</button><p id="wmsg" class="muted"></p></div>
+<div id="history" class="panel"><b>📚 My Tasks & Withdrawals</b><div id="list"></div></div>
+<div id="new" class="panel"><b>🆕 How it works</b><p class="muted">1. Get today's task code.<br>2. Complete the legitimate task on your own device.<br>3. Submit your identifier + task code.<br>4. Admin reviews it.<br>5. Approved reward is added to your balance.</p></div>
+<div class="footer">SR EARNING HUB • Secure manual verification</div></div>
+<script>
+const tg=window.Telegram?.WebApp;tg?.ready();tg?.expand();
+const user=tg?.initDataUnsafe?.user||{id:0,username:"guest"};let cfg={};
+async function api(path,opt={}){let r=await fetch(path,{headers:{'Content-Type':'application/json',...(opt.headers||{})},...opt});return r.json()}
+async function load(){cfg=await api('/api/config');document.getElementById('code').textContent=cfg.task_code;document.getElementById('taskcode').value=cfg.task_code;if(user.id){let d=await api('/api/user',{method:'POST',body:JSON.stringify({tg_id:user.id,username:user.username||''})});document.getElementById('balance').textContent='৳'+Number(d.balance).toFixed(2);document.getElementById('bal2').textContent='৳'+Number(d.balance).toFixed(2);document.getElementById('completed').textContent=d.completed;let s=await api('/api/submissions?tg_id='+user.id);document.getElementById('review').textContent=s.items.filter(x=>x.status==='pending').length}}
+function show(id){document.querySelectorAll('.panel').forEach(x=>x.style.display='none');document.getElementById(id).style.display='block';if(id==='history')loadHistory()}
+async function submitTask(){let msg=document.getElementById('taskmsg');let d=await api('/api/submit',{method:'POST',body:JSON.stringify({tg_id:user.id,identifier:document.getElementById('identifier').value,task_code:document.getElementById('taskcode').value})});msg.textContent=d.message||d.error||'';load()}
+async function withdraw(){let d=await api('/api/withdraw',{method:'POST',body:JSON.stringify({tg_id:user.id,amount:document.getElementById('amount').value,method:document.getElementById('method').value,account:document.getElementById('account').value})});document.getElementById('wmsg').textContent=d.message||d.error||'';load()}
+async function loadHistory(){let a=await api('/api/submissions?tg_id='+user.id),b=await api('/api/withdrawals?tg_id='+user.id);document.getElementById('list').innerHTML=[...a.items.map(x=>`<div class="item">Task #${x.id} • ${x.status} • ৳${x.reward}</div>`),...b.items.map(x=>`<div class="item">Withdraw #${x.id} • ${x.method} • ৳${x.amount} • ${x.status}</div>`)].join('')||'<p class="muted">No records yet.</p>'}
+function copyCode(){navigator.clipboard?.writeText(cfg.task_code);alert('Task code copied')}
+function support(){alert('Support: use the support contact provided by the bot.')}
+function leaderboard(){alert('Leaderboard module is ready to connect to completed-task totals.')}
+load();
+</script></body></html>
